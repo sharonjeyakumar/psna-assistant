@@ -1,0 +1,377 @@
+/* General reset & typography */
+*{
+  box-sizing: border-box;
+}
+
+body{
+  font-family: Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+:root{
+  --h1size: 2.418rem;
+  --h2size: 1.418rem;
+  --h3size: 1rem;
+  --psize: 0.841rem;
+}
+
+h1,h2,h3,p{
+  margin: 0;
+  padding: 0;
+}
+
+h1{ font-size: var(--h1size); }
+h2{ font-size: var(--h2size); }
+h3{ font-size: var(--h3size); }
+p{ font-size: var(--psize); }
+
+/* Page container */
+.page{
+  height: 100dvh;
+  width: 100vw;
+  background-color: #212121;
+}
+
+.page::after{
+  content: "";
+  width: 300px;
+  height: 100px;
+  left: 50%;
+  top: 50%;
+  position: absolute;
+  background-image: url(assets/psnalogowhite.png);
+  background-size: cover;
+  opacity: 0.1;
+  transform: translate(-50%, -90%);
+  transition: opacity 0.3s ease;
+}
+
+.page.hideAfter::after {
+  opacity: 0;
+}
+
+/* Text area */
+.textArea{
+  max-width: 740px;
+  height: calc(100vh - 20px);
+  margin: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* App name */
+.appName{
+  height: 45px;
+  width: 150px;
+  background-color: #4d4d4d;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  position: absolute;
+  margin: auto;
+  top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.3;
+  user-select: none;
+}
+
+.appName h2{
+  color: rgb(207, 207, 207);
+  font-size: 1rem;
+  font-weight: 200;
+  letter-spacing: 0.03rem;
+}
+
+/* Output area */
+.outputArea{
+  margin-top: 85px;
+  height: calc(100% - 200px);
+  width: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: 70px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Scroll helper */
+.scrollHelper {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35px;
+  height: 35px;
+  border-radius: 40px;
+  background-color: #2b2b2b;
+  border: 1px rgb(114, 114, 114) solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.2rem;
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.scrollHelper::after {
+  content: "↓";
+}
+
+.scrollHelper.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Messages */
+.outputMessage {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  line-height: 1.7rem;
+  font-weight: 100;
+  white-space: pre-line;
+}
+
+.aiMsg {
+  color: white;
+  align-self: flex-start;
+  text-align: left;
+  margin-bottom: 40px;
+}
+
+.userMsg {
+  background: #303030;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  align-self: flex-end;
+  text-align: right;
+  margin-bottom: 40px;
+}
+
+/* Thinking indicator */
+.thinkingIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typingDot {
+  width: 8px;
+  height: 8px;
+  background-color: #888;
+  border-radius: 50%;
+  animation: typingAnimation 1.4s infinite ease-in-out;
+}
+
+.typingDot:nth-child(1) { animation-delay: 0s; }
+.typingDot:nth-child(2) { animation-delay: 0.2s; }
+.typingDot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingAnimation {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+  30% { transform: translateY(-10px); opacity: 1; }
+}
+
+
+/* Typing cursor */
+.typingCursor {
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Chat box */
+.chat{
+  height: 100px;
+  width: 740px;
+  border-radius: 10px;
+  background-color: #303030;
+  margin: auto;
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgb(80, 80, 80);
+}
+
+.chatBox{
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: start;
+  padding: 10px 20px 0px 20px;
+}
+
+.messageBox{
+  border: none;
+  width: 100%;
+  height: 30px;
+  resize: none;
+  outline: none;
+  font-size: 1rem;
+  background-color: #303030;
+  color: white;
+}
+
+.messageBox::placeholder {
+  position: relative;
+  top: 2px;     
+  left: 1px;
+}
+
+.cToolsrow{
+  width: 100%;
+  height: 50%;
+  padding: 0 20px;
+  margin-top: 10px;
+  display: flex;
+}
+
+.tools{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.resetBtnWrapper{
+  width: 27px;
+  height: 27px;
+  border-radius: 5px;
+  background-color: #4d4d4d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.resetBtnWrapper:hover{
+  background-color: rgb(58, 58, 58);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.resetBtn{
+  width: 18px;
+  height: 18px;
+  background-image: url(assets/resetIcon.png);
+  background-size: cover;
+  filter: brightness(0) invert(0.6);
+  transition: all ease 0.3s;
+}
+.resetBtn:hover{
+  filter: brightness(0) invert(1);
+  cursor: pointer;
+}
+
+.sendBtn{
+  width: 27px;
+  height: 27px;
+  border-radius: 5px;
+  background-color: #4d4d4d;
+}
+
+.sendBtn::after{
+   content: "↑";
+   font-size: 1rem;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: rgb(189, 189, 189);
+}
+
+.sendBtn:hover::after {
+    transition: 0.3s ease all;
+    color: white;
+}
+
+.sendBtn:hover{
+    cursor: pointer;
+    background-color: rgb(58, 58, 58);
+    transition: all 0.3s ease;
+}
+
+.sendBtn.active {
+  background-color: rgb(255, 255, 255);
+}
+
+.sendBtn.active::after {
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+}
+
+/* ====== Mobile Responsiveness ====== */
+@media (max-width: 768px) {
+
+
+  body{
+    height: 100%;
+    overflow: hidden;
+  }
+  .textArea, .chat {
+    width: 95%;
+  }
+
+  .outputArea{
+    margin-top: 70px;
+    height: calc(100% - 170px);
+  }
+
+  .appName{
+    width: 130px;
+    height: 35px;
+  }
+
+  .appName h2{
+    font-size: 0.9rem;
+  }
+
+  .outputMessage{
+    font-size: 1rem;
+  }
+
+  .chat{
+    height: 90px;
+    margin-bottom: 60px;
+  }
+
+  .chatBox{
+    padding: 8px 15px 0 15px;
+  }
+
+  .messageBox{
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .sendBtn, .resetBtnWrapper{
+    width: 25px;
+    height: 25px;
+  }
+
+  .scrollHelper{
+    bottom: 110px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .outputMessage {
+  font-size: 1rem;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 15px;
+  line-height: 1.7rem;
+  font-weight: 100;
+}
+}
