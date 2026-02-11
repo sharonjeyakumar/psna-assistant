@@ -7,7 +7,7 @@ const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 
 
-
+/////////////////////// OLD LOGIC
 const knowledgeBase = [
   { question: "hello", answer: "Hello! How can I help you today?" },
   { question: "hi", answer: "Hello! How can I help you today?" },
@@ -31,6 +31,8 @@ const fuseTeachers = new Fuse(teachers, {
   threshold: 0.4
 });
 
+////////////////////////// END of OLD LOGIC
+
 function App() {
 
   // CUTTOFF LOGIC
@@ -44,6 +46,7 @@ function App() {
 const [mode, setMode] = useState("chat"); 
 
 
+  // Important variables that govern thinking animation and typing animation
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [hasOverflow, setHasOverflow] = useState(false);
@@ -62,13 +65,14 @@ const [mode, setMode] = useState("chat");
   };
 
   const reply = (userMessage) => {
+    //if the mode is anything other than chat it will not send the normal chat bot reply
     if (mode !== "chat") return;
 
 
 
 
 
-
+    //CHANGE FROM HERE TILL
     let fullResponse = "";
     const lowerMsg = userMessage.toLowerCase();
 
@@ -104,6 +108,12 @@ const [mode, setMode] = useState("chat");
     // Add AI message with empty text first
     const messageObj = { sender: "ai", text: fullResponse, revealedLength: 0 };
     setMessages(prev => [...prev, messageObj]);
+
+    //TIL HERE////////////////////////////////////////
+
+
+
+    // THE THINKING LOGIC ALWAYS DO THIS BEFORE APPENDING THE DIV
     setIsThinking(true);
 
     // Show thinking indicator for 700ms before typing
@@ -125,6 +135,9 @@ const [mode, setMode] = useState("chat");
         }
       }, 25);
     }, 700);
+
+
+    // End of Reply
   };
 
   const handleSendClick = () => {
@@ -160,6 +173,8 @@ const [mode, setMode] = useState("chat");
     if (!isMobile) {
     inputRef.current?.focus();
   }
+
+  // This make sure that the input is focused when keyboard keys are pressed
     const handleKeyDown = e => {
       if (document.activeElement && outputAreaRef.current?.contains(document.activeElement)) return;
       if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
@@ -167,6 +182,7 @@ const [mode, setMode] = useState("chat");
     };
     window.addEventListener('keydown', handleKeyDown);
 
+    // This scrolls to the bottom when new div is added
     const outputEl = outputAreaRef.current;
     outputEl?.addEventListener('scroll', checkOverflowAndScroll);
 
@@ -338,10 +354,11 @@ const calculateCutoff = () => {
           <h2>PSNA Assistant</h2>
         </div>
           <div className="toolbar">
-          <button className="toolBtn" onClick={handleCutoffClick}>Cutoff Calculator</button>
+          <button className="toolBtn" onClick={handleCutoffClick}>Cutoff</button>
           <button className="toolBtn" onClick={handleResetClick}>Faculty</button> 
-          <button className="toolBtn" onClick={handleResetClick}>Events</button>  
           <button className="toolBtn" onClick={handleResetClick}>Result</button>  
+          <button className="toolBtn" onClick={handleResetClick}>Events</button>  
+          
         </div>
         <div className="chat">
           <div className="chatBox">
