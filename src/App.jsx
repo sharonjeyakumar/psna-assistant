@@ -3,6 +3,11 @@ import './App.css';
 import Fuse from 'fuse.js';
 const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+
+
+
+
+
 const knowledgeBase = [
   { question: "hello", answer: "Hello! How can I help you today?" },
   { question: "hi", answer: "Hello! How can I help you today?" },
@@ -27,6 +32,18 @@ const fuseTeachers = new Fuse(teachers, {
 });
 
 function App() {
+
+  // CUTTOFF LOGIC
+  const [cutoffData, setCutoffData] = useState({
+  maths: "",
+  physics: "",
+  chemistry: "",
+  result: null
+});
+
+const [mode, setMode] = useState("chat"); 
+
+
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [hasOverflow, setHasOverflow] = useState(false);
@@ -34,6 +51,8 @@ function App() {
   const [isThinking, setIsThinking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [lastTeacher, setLastTeacher] = useState(null);
+  
+
 
   const inputRef = useRef(null);
   const outputAreaRef = useRef(null);
@@ -43,6 +62,13 @@ function App() {
   };
 
   const reply = (userMessage) => {
+    if (mode !== "chat") return;
+
+
+
+
+
+
     let fullResponse = "";
     const lowerMsg = userMessage.toLowerCase();
 
@@ -102,6 +128,7 @@ function App() {
   };
 
   const handleSendClick = () => {
+    if (mode !== "chat") return;
     if (isThinking || isTyping || message.trim() === '') return;
 
     const userMessage = message;
@@ -167,52 +194,155 @@ function App() {
     }
   };
 
+  // CUTTOFF CALCULATOR
+  const handleCutoffClick = () => {
+  setMode("cutoff"); 
+  setMessages(prev => [
+    ...prev,
+    { sender: "widget", type: "cutoff" }
+  ]);
+};
+
+const calculateCutoff = () => {
+  const m = parseFloat(cutoffData.maths);
+  const p = parseFloat(cutoffData.physics);
+  const c = parseFloat(cutoffData.chemistry);
+
+  if (isNaN(m) || isNaN(p) || isNaN(c)) {
+    alert("Please enter all three marks");
+    return;
+  }
+
+  const cutoff = m + (p / 2) + (c / 2);
+
+  setCutoffData(prev => ({
+    ...prev,
+    result: cutoff.toFixed(2)
+  }));
+};
+
+
   return (
     <div className={`page ${messages.length > 0 ? 'hideAfter' : ''}`}>
       
       <div className="textArea">
         <div className={`outputArea ${hasOverflow ? 'hasOverflow' : ''}`} ref={outputAreaRef}>
-         {messages.map((msg, index) => (
-  <div key={index} className={`outputMessage ${msg.sender === "user" ? "userMsg" : "aiMsg"}`}>
-    {msg.sender === "ai" ? (
-      index === messages.length - 1 && isTyping ? ( // Only last AI message types
-        msg.text.split("").map((char, i) => (
-          <span
-            key={i}
-            style={{ visibility: i < msg.revealedLength ? 'visible' : 'hidden' }}
-          >
-            {char}
-          </span>
-        ))
-      ) : isThinking && index === messages.length - 1 ? ( // Only last AI shows thinking
-        <div className="thinkingIndicator">
-          <div className="typingDot"></div>
-          <div className="typingDot"></div>
-          <div className="typingDot"></div>
-        </div>
+
+
+{/* CUTTOFF DIV */}
+    {messages.map((msg, index) => {
+  if (msg.sender === "widget" && msg.type === "cutoff") {
+    return (
+      <div key={index} className="outputMessage cutoffWidget">
+  <h3>🎯 Cutoff Calculator</h3>
+  <p>Enter your three subject marks</p>
+
+  <div className="cutoffInputs">
+  <label>
+    Mathematics
+    <input
+      type="number"
+      value={cutoffData.maths}
+      onChange={e => setCutoffData(prev => ({ ...prev, maths: e.target.value }))}
+      placeholder="Enter Maths mark"
+      min="0"
+      max="100"
+      required
+    />
+  </label>
+
+  <label>
+    Physics
+    <input
+      type="number"
+      value={cutoffData.physics}
+      onChange={e => setCutoffData(prev => ({ ...prev, physics: e.target.value }))}
+      placeholder="Enter Physics mark"
+      min="0"
+      max="100"
+      required
+    />
+  </label>
+
+  <label>
+    Chemistry
+    <input
+      type="number"
+      value={cutoffData.chemistry}
+      onChange={e => setCutoffData(prev => ({ ...prev, chemistry: e.target.value }))}
+      placeholder="Enter Chemistry mark"
+      min="0"
+      max="100"
+      required
+    />
+  </label>
+
+  <button
+    className="calcBtn"
+    onClick={e => {
+      e.preventDefault();
+      // Use browser validation
+      const form = e.target.closest("div"); // closest parent container
+      const inputs = form.querySelectorAll("input");
+      for (let input of inputs) {
+        if (!input.checkValidity()) {
+          input.reportValidity();
+          return;
+        }
+      }
+      calculateCutoff();
+    }}
+  >
+    Calculate
+  </button>
+
+  {cutoffData.result !== null && (
+    <div className="cutoffResult">
+      🎓 Your Cutoff: <b>{cutoffData.result}</b> / 200
+    </div>
+  )}
+</div>
+
+</div>
+    );
+  }
+
+  return (
+    <div key={index} className={`outputMessage ${msg.sender === "user" ? "userMsg" : "aiMsg"}`}>
+      {msg.sender === "ai" ? (
+        index === messages.length - 1 && isTyping ? (
+          msg.text.split("").map((char, i) => (
+            <span key={i} style={{ visibility: i < msg.revealedLength ? 'visible' : 'hidden' }}>
+              {char}
+            </span>
+          ))
+        ) : isThinking && index === messages.length - 1 ? (
+          <div className="thinkingIndicator">
+            <div className="typingDot"></div>
+            <div className="typingDot"></div>
+            <div className="typingDot"></div>
+          </div>
+        ) : (
+          msg.text
+        )
       ) : (
-        msg.text // previous messages stay fully visible
-      )
-    ) : (
-      msg.text
-    )}
-  </div>
-))}
+        msg.text
+      )}
+    </div>
+  );
+})}
 
-        </div>
 
+    </div>
         <div className="appName">
           <h2>PSNA Assistant</h2>
         </div>
-        
-        <div className="toolbar">
-        <button className="toolBtn" onClick={handleResetClick}>Cutoff Calculator</button>
-        <button className="toolBtn" onClick={handleResetClick}>Faculty</button> 
-        <button className="toolBtn" onClick={handleResetClick}>Events</button>  
-        <button className="toolBtn" onClick={handleResetClick}>Result</button>  
-      </div>
-
-
+          <div className="toolbar">
+          <button className="toolBtn" onClick={handleCutoffClick}>Cutoff Calculator</button>
+          <button className="toolBtn" onClick={handleResetClick}>Faculty</button> 
+          <button className="toolBtn" onClick={handleResetClick}>Events</button>  
+          <button className="toolBtn" onClick={handleResetClick}>Result</button>  
+        </div>
         <div className="chat">
           <div className="chatBox">
             <input
@@ -228,6 +358,7 @@ function App() {
               spellCheck="false"
               autoComplete="off"
               inputMode="text"
+              onFocus={() => setMode("chat")}
             />
           </div>
           <div className="cToolsrow">
@@ -244,7 +375,14 @@ function App() {
         </div>
 
         <div
-          className={`scrollHelper ${hasOverflow && !isNearBottom ? 'visible' : ''}`}
+          className={`scrollHelper ${
+          hasOverflow && 
+          !isNearBottom && 
+          !isThinking && 
+          !isTyping 
+            ? 'visible' 
+            : ''
+        }`}
           onClick={() => scrollToBottom()}
         ></div>
       </div>

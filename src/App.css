@@ -45,6 +45,7 @@ p{ font-size: var(--psize); }
   opacity: 0.1;
   transform: translate(-50%, -90%);
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .page.hideAfter::after {
@@ -103,6 +104,7 @@ p{ font-size: var(--psize); }
 /* Scroll helper */
 .scrollHelper {
   position: absolute;
+  z-index: 100;
   bottom: 130px;
   left: 50%;
   transform: translateX(-50%);
@@ -317,11 +319,11 @@ p{ font-size: var(--psize); }
 
 
 /*TOOL BAR*/
- /* .toolbar {
+ .toolbar {
   position: fixed;
   left: 0;
   top: 0;
-  width: 60px;
+  width: 70px;
   height: 100vh;
   background: #161616;
   border-right: 1px solid #222;
@@ -335,13 +337,13 @@ p{ font-size: var(--psize); }
 }
 
 .toolBtn {
-  width: 42px;
-  height: 42px;
+  width: 50px;
+  height: 50px;
   border-radius: 10px;
   border: none;
   background: #232323;
   color: white;
-  font-size: 1.4rem;
+  font-size: 0.6rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -355,12 +357,100 @@ p{ font-size: var(--psize); }
 
 .toolBtn:active {
   transform: scale(0.92);
-} */
-
-.toolbar{
-  display: none;
 }
 
+/* .toolbar{
+  display: none;
+} */
+
+/* CUTTOFF */
+.cutoffWidget {
+  background: linear-gradient(135deg, #1f2937, #111827);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px 18px;
+  max-width: 100%;
+  color: #fff;
+  animation: slideUp 0.25s ease;
+   position: relative;
+  z-index: 10;
+}
+
+.cutoffWidget h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.cutoffWidget p {
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.cutoffInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cutoffInputs label {
+  font-size: 0.75rem;
+  color: #cbd5f5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cutoffInputs input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  color: white;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.cutoffInputs input:focus {
+  border-color: #60a5fa;
+  background: rgba(255,255,255,0.08);
+}
+
+.calcBtn {
+  margin-top: 8px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.calcBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(59,130,246,0.45);
+}
+
+.calcBtn:active {
+  transform: scale(0.98);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 
 /* ====== Mobile Responsiveness ====== */
@@ -379,7 +469,7 @@ p{ font-size: var(--psize); }
 
   .outputArea{
     margin-top: 100px;
-    height: calc(100% - 190px);
+    height: calc(100% - 250px);
   }
 
   
@@ -440,8 +530,7 @@ p{ font-size: var(--psize); }
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    /* gap: 10px; */
-
+    border: none;
     padding:0 10px;
 
   position: absolute;
@@ -455,7 +544,7 @@ p{ font-size: var(--psize); }
   }
 
   .toolBtn {
-    min-width: 70px;
+    min-width: 80px;
     height: 36px;
     font-size: 0.8rem;
     /* background-color: transparent; */
