@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
 import Fuse from 'fuse.js';
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 const knowledgeBase = [
   { question: "hello", answer: "Hello! How can I help you today?" },
@@ -129,7 +130,9 @@ function App() {
   };
 
   useEffect(() => {
+    if (!isMobile) {
     inputRef.current?.focus();
+  }
     const handleKeyDown = e => {
       if (document.activeElement && outputAreaRef.current?.contains(document.activeElement)) return;
       if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
@@ -166,6 +169,7 @@ function App() {
 
   return (
     <div className={`page ${messages.length > 0 ? 'hideAfter' : ''}`}>
+      
       <div className="textArea">
         <div className={`outputArea ${hasOverflow ? 'hasOverflow' : ''}`} ref={outputAreaRef}>
          {messages.map((msg, index) => (
@@ -194,11 +198,20 @@ function App() {
     )}
   </div>
 ))}
+
         </div>
 
         <div className="appName">
           <h2>PSNA Assistant</h2>
         </div>
+        
+        <div className="toolbar">
+        <button className="toolBtn" onClick={handleResetClick}>Cutoff Calculator</button>
+        <button className="toolBtn" onClick={handleResetClick}>Faculty</button> 
+        <button className="toolBtn" onClick={handleResetClick}>Events</button>  
+        <button className="toolBtn" onClick={handleResetClick}>Result</button>  
+      </div>
+
 
         <div className="chat">
           <div className="chatBox">
