@@ -149,7 +149,7 @@ function App() {
           : "I'm not sure I understand. Could you rephrase?";
     }
 
-    let apiReponse = await fetch("http://localhost:5173/api/respond", {
+    let apiReponse = await fetch("http://localhost:8000/api/respond", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: userMessage }),
