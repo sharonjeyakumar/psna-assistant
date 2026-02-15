@@ -1,0 +1,12 @@
+The Teachers of PSNA College of Engineering and Technology.
+
+Dr. Thomas Paul Roy is a senior Teacher worked for more than a 10 years at PSNA College of Engineering and Technology.
+Thomas Paul Roy currently teaches the subjects "Web Technology", "Data Structure", and "Theory of Computation" for 2nd and 3rd years.
+Thomas Paul Roy's cabin is currently at the Second Floor's Computer Lab.
+
+Ms. Padmapriya is also a teacher at PSNA College of Engineering and Technology, who teaches "Object Oriented Programming", and "Cryptography and CyberSecurity"
+Ms. Padmapriya's cabin is at the 3rd floor, room number 304.
+
+Dr. Satheesh Babu is a senior Teacher worked in PSNA for more than 10 years. He is also the current Placement Co-ordinator for the Fourth / Final Years as of 2026.
+Dr. Satheesh Babu Teaches "Data Structures", "Data Science" and "Python Programming".
+Dr. Satheesh Babu's cabin is at the Second Floor room number 207. He is also said to be in the second floor research lab.

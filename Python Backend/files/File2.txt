@@ -1,0 +1,154 @@
+1. Departments (with Seat Intake & Accreditation)
+PSNACET offers a wide array of undergraduate and postgraduate programmes across engineering and management:
+
+Undergraduate (B.E. / B.Tech):
+
+Computer Science & Engineering (CSE)
+
+Artificial Intelligence & Data Science
+
+Computer Science & Business Systems
+
+Information Technology
+
+Electronics & Communication Engineering (ECE)
+
+Electronics Engineering (VLSI Design & Tech)
+
+Cyber Security
+
+Electrical & Electronics Engineering (EEE)
+
+Mechanical Engineering
+
+Civil Engineering
+
+Biomedical Engineering
+
+Postgraduate (M.E. / M.Tech / MBA / MCA):
+
+M.E. Computer Science & Engineering
+
+M.E. Power Electronics & Drives
+
+M.E. Computer & Communication
+
+M.E. Applied Electronics
+
+M.E. VLSI Design
+
+M.E. Structural Engineering
+
+M.E. Engineering Design
+
+MBA (full-time, via TANCET)
+
+MCA (full-time)
+
+Accreditations:
+UG programmes in Mechanical, ECE, EEE, CSE and Civil are accredited by NBA. The college holds NAAC A++ (CGPA 3.65) and ranks in the NIRF 2024 engineering bracket 201–300 
+
+
+2. Cut‑Offs for Admission
+
+Admission to UG programmes is through TNEA (based on higher secondary marks in Maths/Physics/Chemistry) via government counselling. For PG programmes (MBA/MCA), admission is largely through TANCET.
+
+TNEA 2024 – Closing State Ranks (general category, home state):
+
+CSE: 21 584
+
+AI & Data Science: 31 372
+
+CSE (AI & ML): 42 100
+
+IT: 37 429
+
+ECE: 34 609
+
+EEE: 52 077
+
+VLSI: 53 600
+
+Cyber Security: 31 694
+
+Biomedical: 59 642
+
+Civil: 56 536
+
+Mechanical: 91 027 
+
+Year‑on‑year fluctuations:
+For CSE, the closing rank increased from 20 691 (2023) to 21 584 (2024), showing moderate demand 
+
+
+TANCET 2024 – MBA closing ranks:
+
+General category: 3 057
+
+OBC: 4 474
+Former trends: 3 445 (2023), 3 685 (2022) 
+
+
+Merit‑based cutoff levels (college management quota):
+Based on Physics+Chemistry+Maths scores:
+
+Civil Engineering: 116 (min) to 172 (max)
+
+Mechanical Engineering: 102 to 164.66 
+
+3. Student & Alumni Reviews
+
+Reviews reflect a mix of academic quality, placements, infrastructure, and student life.
+
+Shiksha user “Roshana S” (MBA ’22)
+
+“Placements: Around 70% to 80% of students... highest package…12 LPA. Average…4–5 LPA.”
+She rated faculty, infrastructure, curriculum, campus life at 4/5; value for money at 3.8/5 
+
+
+MUHAMMED ASHIQ B. (Mechanical ’27)
+Noted that many jobs are with smaller local firms offering about ₹20 k/month (~3–4 LPA), though a few students received up to 15 LPA from TCS, Lavendel Consulting, Zoho 
+
+
+Careers360 (CSE and IT students)
+– 80–90% placement rate, with average packages of ₹6–8 LPA;
+– Infrastructure praised: smart classrooms, labs, hostel, sports amenities;
+– Academics highlighted for real‑world relevance 
+
+
+CollegeDunia/Careers360 (MCA student)
+
+“Placement support was excellent… average package 4 LPA… 50%+ placement.”
+Faculty with 10+ years’ experience; gender ratio ~1:1; pleasant learning environment 
+
+
+Reddit (r/TamilNadu thread, ~3 mo ago)
+Described campus as “not a state‑of‑art infra, but kinda better compared to other Engg colleges in Southern dists.”
+Hostels are separate; food “decent.” Teachers use PDFs/notes but are approachable and supportive 
+
+AmbitionBox
+Highlights: “Good working environment, passionate faculty, many skill‑development activities, human consideration” 
+
+--
+
+Summary of Reviews:
+
+Strengths: Strong placement support; good companies like TCS, Infosys, Zoho, Accenture, Hexaware; average salary is ₹4–8 LPA, with top offers up to ₹12–15 LPA. Infrastructure is decent with modern labs and hostel facilities. Faculty are approachable and supportive.
+
+Weaknesses: Limited exposure to product‑based multinational companies; a portion of placements involve smaller local firms with modest pay. Some facilities (like labs or internet access) may need improvement.
+
+4. Interpretations & Guidance
+
+UG programmes: Seek closing ranks roughly ≤ 22 000 for CSE; other popular branches like ECE, IT require ranks within 35 000–40 000. Mechanical and Civil seats fill later with ranks up to ~90 000–60 000.
+
+PG programmes: MBA admission requires a TANCET rank ≤ 3 000–3 500 (general); for MCA, details not available but selection is through TANCET and consortium.
+
+Preparation: Candidates aiming for CSE need ~140–160 scaled TNEA marks to secure admission.
+
+Value proposition: PSNACET balances academics, placements, and student life. Ideal for those seeking a reputable engineering education in Tamil Nadu outside metropolitan areas, with solid but not elite industry placements.
+
+Highlights On PSNACET:
+
+A Student Named "Tharun Chezhian M" from the deopartment of CSE (Computer Science and Engineering) produced a movie so top tier, that actual directors like Christophor Nolan wanted an Autograph from him.
+A student Named "Srivarshan K" from the Department of CSE got placed in Google and now in rivalry with Mr. Sundar Pichai, who is current CEO of google to achieve the next CEO spot.
+A Studeny named "Simson Roach S" from the Department of CSE completed various achievements including helping out Tharun Chezhian on his achievement and achieving an award of his own on the "Best Designer in the world" in 2025. 
