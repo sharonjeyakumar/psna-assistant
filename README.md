@@ -1,12 +1,47 @@
-# React + Vite
+# PSNA Assisstant
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### How to set up PSNA Assisstant - DEV MODE
 
-Currently, two official plugins are available:
+#### Prequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Have to have installed Ollama
+- Need Python
+- Need Node js
 
-## Expanding the ESLint configuration
+#### Step By step Guide to install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Download Ollama from [this link](https://ollama.com/download)
+2. Install [Python](https://www.python.org/downloads/) and [Node.js](https://nodejs.org/en/download) is you haven't already
+3. Clone this repo.
+   1. Go to your desired Directory / Folder in your machine
+   2. Open up terminal / command prompt
+   3. Type the following and hit enter
+      `git clone https://github.com/sharonjeyakumar/psna-assistant` <br>
+
+4. Now in the terminal, run this Ollama command <br>
+   `ollama run mistral`
+
+   > This will install an Open Source AI model onto your system, the size is about 4 gigabytes, so it might take a while
+
+5. After Ollama is running, we have to run the Front End server, and the Back End server.
+6. In the Directory / Folder of `psna-assistant`, run
+
+   `npm install` <br>
+   `npm run dev` <br>
+
+   > This should get the front end server running.
+
+7. Now, go to the Directory of `Python Backend` in the Terminal, using `cd` command. Run the following while in that directory.
+
+   `pip install -r requirements.txt` <br>
+   `uvicorn backend:app` <br>
+
+   > Sometimes this doesnt work. If thats the case, run these commands.
+   - If this command `pip install -r requirements.txt` doesnt work, try this
+     - `python -m pip install -r requirements.txt` or `python3 -m pip install -r requirements.txt` <br>
+
+   - If this command `uvicorn backend:app` doesnt work, try this
+     - `python -m uvicorn backend:app` <br>
+
+       > NOTE: Running backend takes a bit of Time. So please be patient, until you see this screen
+       > ![Backend Loaded Successful](/README%20Images/Backend_Success.png)
