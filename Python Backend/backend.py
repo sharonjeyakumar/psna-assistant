@@ -50,8 +50,8 @@ def send_response(req: BasicRequest):
     retrieved_docs = vectorStore.similarity_search(prompt, k=3)
     context = "\n\n".join([doc.page_content for doc in retrieved_docs])
 
-    custom_prompt = f"""You are a Cheerful Assistant trying to help people by answering their queries.
-
+    custom_prompt = f"""You are a Cheerful Assistant from PSNA College of Engineering and Technology trying to help people by answering their queries.
+    You are to act like a real friendly person, and answer the user query with what you know as context. DO NOT give long answers.
 What you know about this query:
 {context}
 
