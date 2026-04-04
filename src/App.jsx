@@ -1,6 +1,3 @@
-
-
-
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import Fuse from "fuse.js";
@@ -63,6 +60,10 @@ const fuseTeachers = new Fuse(teachers, {
 
 ////////////////////////// END of OLD LOGIC
 
+// Used for tracking and sending Whole chat Logs to AI
+var chatLogs = [];
+var userMsgForChatLogs = "";
+
 function App() {
   // CUTTOFF LOGIC
   const [cutoffData, setCutoffData] = useState({
@@ -88,160 +89,153 @@ function App() {
   const lastMessageCount = useRef(0);
   const bottomRef = useRef(null);
 
-
-
   const scrollToBottom = () => {
-  if (outputAreaRef.current) {
-    const element = outputAreaRef.current;
-    element.scrollTo({
-      top: element.scrollHeight,
-      behavior: "smooth",
-    });
-  }
-};
+    if (outputAreaRef.current) {
+      const element = outputAreaRef.current;
+      element.scrollTo({
+        top: element.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const reply = async (userMessage) => {
-  if (mode !== "chat") return;
+    if (mode !== "chat") return;
 
-  // 1. Create EMPTY AI bubble immediately (so thinking can render)
-  setMessages((prev) => [
-    ...prev,
-    { sender: "ai", text: "", revealedLength: 0 },
-  ]);
+    // 1. Create EMPTY AI bubble immediately (so thinking can render)
+    setMessages((prev) => [
+      ...prev,
+      { sender: "ai", text: "", revealedLength: 0 },
+    ]);
 
-  setIsThinking(true);
+    setIsThinking(true);
 
-  let fullResponse = "";
-  const lowerMsg = userMessage.toLowerCase();
+    let fullResponse = "";
+    const lowerMsg = userMessage.toLowerCase();
 
-  // ---------- LOCAL LOGIC (Teachers + Fuse) ----------
-  const teacherKeywords = [
-    "cabin",
-    "contact",
-    "mail",
-    "email",
-    "dept",
-    "department",
-    "all",
-    "details",
-    "whole",
-  ];
+    // ---------- LOCAL LOGIC (Teachers + Fuse) ----------
+    const teacherKeywords = [
+      "cabin",
+      "contact",
+      "mail",
+      "email",
+      "dept",
+      "department",
+      "all",
+      "details",
+      "whole",
+    ];
 
-  const isTeacherQuery = teacherKeywords.some((kw) =>
-    lowerMsg.includes(kw)
-  );
+    const isTeacherQuery = teacherKeywords.some((kw) => lowerMsg.includes(kw));
 
-  let teacher = teachers.find((t) =>
-    lowerMsg.includes(t.name.toLowerCase())
-  );
+    let teacher = teachers.find((t) => lowerMsg.includes(t.name.toLowerCase()));
 
-  if (!teacher && isTeacherQuery && lastTeacher) {
-    teacher = lastTeacher;
-  }
-
-  if (teacher) {
-    setLastTeacher(teacher);
-    const parts = [];
-
-    if (lowerMsg.includes("cabin"))
-      parts.push(`Cabin: ${teacher.cabin}`);
-
-    if (lowerMsg.includes("contact"))
-      parts.push(`Contact: ${teacher.contact}`);
-
-    if (lowerMsg.includes("mail") || lowerMsg.includes("email"))
-      parts.push(`Email: ${teacher.mail}`);
-
-    if (lowerMsg.includes("dept") || lowerMsg.includes("department"))
-      parts.push(`Department: ${teacher.dept}`);
-
-    if (parts.length > 0) {
-      fullResponse =
-        `${teacher.title} ${teacher.name}'s details:\n` +
-        parts.join("\n");
-    } else if (
-      lowerMsg.includes("all") ||
-      lowerMsg.includes("details") ||
-      lowerMsg.includes("whole")
-    ) {
-      fullResponse =
-        `${teacher.title} ${teacher.name} (${teacher.dept})\n` +
-        `Cabin: ${teacher.cabin}\n` +
-        `Contact: ${teacher.contact}\n` +
-        `Email: ${teacher.mail}`;
-    } else {
-      fullResponse = `${teacher.title} ${teacher.name} is a Faculty member of PSNA College. What do you want to know? (cabin, contact, mail, dept, or all details)`;
+    if (!teacher && isTeacherQuery && lastTeacher) {
+      teacher = lastTeacher;
     }
-  } else {
-    const results = fuse.search(userMessage);
-    fullResponse =
-      results.length > 0
-        ? results[0].item.answer
-        : "";
-  }
 
-  // ---------- AI API CALL ----------
-  try {
-    const apiResponse = await fetch(
-      "http://localhost:8000/api/respond",
-      {
+    if (teacher) {
+      setLastTeacher(teacher);
+      const parts = [];
+
+      if (lowerMsg.includes("cabin")) parts.push(`Cabin: ${teacher.cabin}`);
+
+      if (lowerMsg.includes("contact"))
+        parts.push(`Contact: ${teacher.contact}`);
+
+      if (lowerMsg.includes("mail") || lowerMsg.includes("email"))
+        parts.push(`Email: ${teacher.mail}`);
+
+      if (lowerMsg.includes("dept") || lowerMsg.includes("department"))
+        parts.push(`Department: ${teacher.dept}`);
+
+      if (parts.length > 0) {
+        fullResponse =
+          `${teacher.title} ${teacher.name}'s details:\n` + parts.join("\n");
+      } else if (
+        lowerMsg.includes("all") ||
+        lowerMsg.includes("details") ||
+        lowerMsg.includes("whole")
+      ) {
+        fullResponse =
+          `${teacher.title} ${teacher.name} (${teacher.dept})\n` +
+          `Cabin: ${teacher.cabin}\n` +
+          `Contact: ${teacher.contact}\n` +
+          `Email: ${teacher.mail}`;
+      } else {
+        fullResponse = `${teacher.title} ${teacher.name} is a Faculty member of PSNA College. What do you want to know? (cabin, contact, mail, dept, or all details)`;
+      }
+    } else {
+      const results = fuse.search(userMessage);
+      fullResponse = results.length > 0 ? results[0].item.answer : "";
+    }
+
+    // ---------- AI API CALL ----------
+    try {
+      const apiResponse = await fetch("http://localhost:8000/api/respond", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: userMessage }),
-      }
-    );
-
-    const data = await apiResponse.json();
-
-    // Prefer AI response if available
-    if (data?.response) {
-      fullResponse = data.response;
-    }
-  } catch (err) {
-    console.error("API Error:", err);
-    if (!fullResponse) {
-      fullResponse = "Server is unreachable. Please try again later.";
-    }
-  }
-
-  // ---------- THINKING → TYPING FLOW ----------
-  setTimeout(() => {
-    setIsThinking(false);
-    setIsTyping(true);
-
-    let index = 0;
-
-    const interval = setInterval(() => {
-      index++;
-
-      setMessages((prev) => {
-        const updated = [...prev];
-        const last = updated[updated.length - 1];
-
-        last.text = fullResponse;
-        last.revealedLength = index;
-
-        return updated;
+        body: JSON.stringify({ prompt: JSON.stringify(chatLogs) }),
       });
 
-      if (index >= fullResponse.length) {
-        clearInterval(interval);
-        setIsTyping(false);
-      }
-    }, 12);
-  }, 0);
-};
+      const data = await apiResponse.json();
 
+      // Prefer AI response if available
+      if (data?.response) {
+        fullResponse = data.response;
+        console.log(fullResponse);
+        chatLogs = [...chatLogs, { AI_MODEL: fullResponse }];
+        console.log(chatLogs);
+      }
+    } catch (err) {
+      console.error("API Error:", err);
+      if (!fullResponse) {
+        fullResponse = "Server is unreachable. Please try again later.";
+      }
+    }
+
+    // ---------- THINKING → TYPING FLOW ----------
+    setTimeout(() => {
+      setIsThinking(false);
+      setIsTyping(true);
+
+      let index = 0;
+
+      const interval = setInterval(() => {
+        index++;
+
+        setMessages((prev) => {
+          const updated = [...prev];
+          const last = updated[updated.length - 1];
+
+          last.text = fullResponse;
+          last.revealedLength = index;
+
+          return updated;
+        });
+
+        if (index >= fullResponse.length) {
+          clearInterval(interval);
+          setIsTyping(false);
+        }
+      }, 12);
+    }, 0);
+  };
 
   const handleSendClick = async () => {
     if (mode !== "chat") return;
     if (isThinking || isTyping || message.trim() === "") return;
 
     const userMessage = message;
+    console.log({ message });
     setMessages((prev) => [...prev, { sender: "user", text: message }]);
+    console.log("Before ", chatLogs);
+    chatLogs = [...chatLogs, { USER: userMsgForChatLogs }];
+    console.log("After", chatLogs);
     setMessage("");
     // THE THINKING LOGIC ALWAYS DO THIS BEFORE APPENDING THE DIV
     setIsThinking(true);
+
     await reply(userMessage);
 
     setTimeout(() => inputRef.current?.blur(), 100);
@@ -297,42 +291,40 @@ function App() {
     };
   }, []);
 
-useEffect(() => {
-  checkOverflowAndScroll();
-
-  const prevCount = lastMessageCount.current;
-  const currentCount = messages.length;
-
-  if (currentCount > prevCount) {
-    const lastMsg = messages[messages.length - 1];
-    
-    // Force scroll if it's a widget (like Cutoff) OR if user is already near bottom
-    if (lastMsg.sender === "widget" || isNearBottom) {
-      setTimeout(scrollToBottom, 50);
-    }
-  }
-
-  lastMessageCount.current = currentCount;
-}, [messages, isNearBottom]);
-useEffect(() => {
-  if (isThinking || isTyping) {
-    scrollToBottom();
-  }
-}, [isThinking, isTyping]);
-
-useEffect(() => {
-  // Only check overflow after AI typing finishes
-  if (isThinking || isTyping) return;
-
-  // Wait for DOM to render new messages
-  const timer = setTimeout(() => {
+  useEffect(() => {
     checkOverflowAndScroll();
-  }, 50); // small delay to ensure AI message is rendered
 
-  return () => clearTimeout(timer);
-}, [messages, isThinking, isTyping]);
+    const prevCount = lastMessageCount.current;
+    const currentCount = messages.length;
 
+    if (currentCount > prevCount) {
+      const lastMsg = messages[messages.length - 1];
 
+      // Force scroll if it's a widget (like Cutoff) OR if user is already near bottom
+      if (lastMsg.sender === "widget" || isNearBottom) {
+        setTimeout(scrollToBottom, 50);
+      }
+    }
+
+    lastMessageCount.current = currentCount;
+  }, [messages, isNearBottom]);
+  useEffect(() => {
+    if (isThinking || isTyping) {
+      scrollToBottom();
+    }
+  }, [isThinking, isTyping]);
+
+  useEffect(() => {
+    // Only check overflow after AI typing finishes
+    if (isThinking || isTyping) return;
+
+    // Wait for DOM to render new messages
+    const timer = setTimeout(() => {
+      checkOverflowAndScroll();
+    }, 50); // small delay to ensure AI message is rendered
+
+    return () => clearTimeout(timer);
+  }, [messages, isThinking, isTyping]);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -364,8 +356,8 @@ useEffect(() => {
       result: cutoff.toFixed(2),
     }));
     setTimeout(() => {
-    scrollToBottom();
-  }, 100);
+      scrollToBottom();
+    }, 100);
   };
 
   return (
@@ -462,7 +454,7 @@ useEffect(() => {
                         🎓 Your Cutoff: <b>{cutoffData.result}</b> / 200
                       </div>
                     )}
-                  </div > 
+                  </div>
                 </div>
               );
             }
@@ -530,7 +522,12 @@ useEffect(() => {
               placeholder="What's on your mind?"
               className="messageBox"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                if (String(e.target.value) !== "") {
+                  userMsgForChatLogs = e.target.value;
+                }
+              }}
               onKeyDown={handleKeyPress}
               ref={inputRef}
               autoCorrect="off"
@@ -560,9 +557,7 @@ useEffect(() => {
 
         <div
           className={`scrollHelper ${
-            hasOverflow && !isNearBottom
-              ? "visible"
-              : ""
+            hasOverflow && !isNearBottom ? "visible" : ""
           }`}
           onClick={() => scrollToBottom()}
         ></div>

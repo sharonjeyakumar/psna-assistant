@@ -46,6 +46,7 @@ class BasicRequest(BaseModel):
 @app.post('/api/respond')
 def send_response(req: BasicRequest):
     prompt = req.prompt
+    print(prompt)
 
     retrieved_docs = vectorStore.similarity_search(prompt, k=3)
     context = "\n\n".join([doc.page_content for doc in retrieved_docs])
