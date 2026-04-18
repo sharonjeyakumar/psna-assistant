@@ -3,66 +3,32 @@ import "./App.css";
 import Fuse from "fuse.js";
 const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-/////////////////////// OLD LOGIC
-const knowledgeBase = [
-  { question: "hello", answer: "Hello! How can I help you today?" },
-  { question: "hi", answer: "Hello! How can I help you today?" },
-  {
-    question: "what is your name",
-    answer: "I'm PSNA Assistant, here to help you.",
-  },
-  { question: "who are you", answer: "I'm PSNA Assistant, here to help you." },
-  {
-    question: "how are you",
-    answer: "I'm just a bot, but I'm doing great! How about you?",
-  },
-  { question: "help", answer: "Sure! Tell me what you need help with." },
-];
-
-const teachers = [
-  {
-    title: "Dr.",
-    name: "Anita",
-    dept: "CSE",
-    cabin: "Block A - Room 203",
-    contact: "9876543210",
-    mail: "anita@psnacollege.edu",
-  },
-  {
-    title: "Mr.",
-    name: "Ramesh",
-    dept: "ECE",
-    cabin: "Block B - Room 105",
-    contact: "9123456780",
-    mail: "ramesh@psnacollege.edu",
-  },
-  {
-    title: "Ms.",
-    name: "Kavitha",
-    dept: "IT",
-    cabin: "Block C - Room 310",
-    contact: "9098765432",
-    mail: "kavitha@psnacollege.edu",
-  },
-];
-
-const fuse = new Fuse(knowledgeBase, {
-  keys: ["question"],
-  includeScore: true,
-  threshold: 0.4,
-});
-
-const fuseTeachers = new Fuse(teachers, {
-  keys: ["name", "dept"], // You can add "cabin" or "mail" if needed
-  includeScore: true,
-  threshold: 0.4,
-});
-
-////////////////////////// END of OLD LOGIC
 
 // Used for tracking and sending Whole chat Logs to AI
 var chatLogs = [];
 var userMsgForChatLogs = "";
+
+
+const events = [
+  {
+    name: "Hackathon 2026",
+    dept: "CSE",
+    date: "2026-04-10",
+    link: "https://example.com/hackathon",
+  },
+  {
+    name: "Tech Symposium",
+    dept: "ECE",
+    date: "2026-04-15",
+    link: "https://example.com/symposium",
+  },
+  {
+    name: "AI Workshop",
+    dept: "IT",
+    date: "2026-04-20",
+    link: null,
+  },
+];
 
 function App() {
   // CUTTOFF LOGIC
@@ -360,6 +326,47 @@ function App() {
     }, 100);
   };
 
+  // Events
+  const handleEventsClick = () => {
+  setMode("events");
+  setMessages((prev) => [
+    ...prev,
+    { sender: "widget", type: "events" },
+  ]);
+};
+const handleEventClick = (event) => {
+  setMessages((prev) => [
+    ...prev,
+    {
+      sender: "ai",
+      text: `📅 ${event.name}
+Department: ${event.dept}
+Date: ${event.date}
+
+${getDaysLeft(event.date)}`,
+    },
+  ]);
+
+  setMode("chat"); // optional: go back to chat mode
+};
+
+
+const getDaysLeft = (dateString) => {
+  const today = new Date();
+  const eventDate = new Date(dateString);
+
+  // Remove time for accurate day diff
+  today.setHours(0, 0, 0, 0);
+  eventDate.setHours(0, 0, 0, 0);
+
+  const diffTime = eventDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) return `${diffDays} days to go`;
+  if (diffDays === 0) return "Today 🎉";
+  return "Event passed";
+};
+
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
       <div className="textArea">
@@ -459,6 +466,46 @@ function App() {
               );
             }
 
+             // EVENTS WIDGET
+if (msg.sender === "widget" && msg.type === "events") {
+  return (
+    <div key={index} className="outputMessage eventsWidget">
+      <h3>📅 Upcoming Events</h3>
+
+      <div className="eventsContainer">
+       {events.map((event, i) => {
+  const isClickable = event.link && event.link.trim() !== "";
+
+  return (
+    <div
+      key={i}
+      className={`eventCard ${!isClickable ? "disabled" : ""}`}
+      onClick={() => {
+        if (!isClickable) return;
+        window.open(event.link, "_blank");
+      }}
+    >
+      <div className="eventHeader">
+        <h4>{event.name}</h4>
+        <div className="eventDate">{event.date}</div>
+      </div>
+
+      <div className="eventBottom">
+        <div className="eventDept">Department: {event.dept}</div>
+        <div className="eventCountdown">
+          {getDaysLeft(event.date)}
+        </div>
+      </div>
+    </div>
+  );
+})}
+
+      </div>
+    </div>
+  );
+}
+
+
             return (
               <div
                 key={index}
@@ -510,7 +557,7 @@ function App() {
             Result
           </button>
             
-          <button className="toolBtn" onClick={handleResetClick}>
+          <button className="toolBtn" onClick={handleEventsClick}>
             Events
           </button>
             

@@ -458,6 +458,147 @@ p{ font-size: var(--psize); }
   transform: scale(0.98);
 }
 
+
+
+/* Events styling */
+.eventsWidget {
+  background: linear-gradient(135deg, #1f2937, #111827);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px 18px;
+  color: #fff;
+  animation: slideUp 0.25s ease;
+}
+
+.eventsWidget h3 {
+  margin: 0 0 16px; /* more breathing room */
+}
+/* container spacing like cutoff inputs */
+.eventsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* each event = like an input block */
+.eventCard {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+/* Hover = subtle lift, not ugly glow */
+.eventCard:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-1px);
+}
+
+/* Click feel */
+.eventCard:active {
+  transform: scale(0.98);
+}
+
+/* Header (top row) */
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Title */
+.eventHeader h4 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* Date (right side) */
+.eventDate {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+/* Bottom row (perfect symmetry fix) */
+.eventBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+/* Department */
+.eventDept {
+  font-size: 0.72rem;
+  color: #cbd5f5;
+}
+
+/* Countdown */
+.eventCountdown {
+  font-size: 0.7rem;
+  color: #60a5fa;
+  font-weight: 500;
+}
+
+
+/* top row */
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eventHeader h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+/* date on right */
+.eventDate {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* department text (like labels in cutoff) */
+.eventDept {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #cbd5f5;
+}
+
+/* bottom row: dept left, countdown right */
+.eventBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* countdown */
+.eventCountdown {
+  font-size: 0.75rem;
+  color: #60a5fa;
+}
+
+/*********** Optional ************/
+.eventCard.disabled {
+  /* opacity: 0.5; */
+  cursor: default;
+  pointer-events: none;
+}
+
+.eventCard.disabled:hover {
+  transform: none;
+  background: rgba(255,255,255,0.06);
+}
+
+
 @keyframes slideUp {
   from {
     opacity: 0;
