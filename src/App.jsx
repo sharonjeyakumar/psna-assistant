@@ -30,6 +30,20 @@ const events = [
   },
 ];
 
+const galleryImages = [
+  {
+    title: "PSNA College Campus",
+    url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200",
+    subtitle: "Main Academic Block"
+  },
+  {
+    title: "College Auditorium",
+    url: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200",
+    subtitle: "Events & Seminars"
+  },
+];
+
+
 function App() {
   // CUTTOFF LOGIC
   const [cutoffData, setCutoffData] = useState({
@@ -367,6 +381,23 @@ const getDaysLeft = (dateString) => {
   return "Event passed";
 };
 
+// IMAGE LOGIC
+const handleImageClick = () => {
+  const randomImage =
+    galleryImages[Math.floor(Math.random() * galleryImages.length)];
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      sender: "widget",
+      type: "image",
+      image: randomImage
+    }
+  ]);
+};
+
+
+
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
       <div className="textArea">
@@ -466,6 +497,26 @@ const getDaysLeft = (dateString) => {
               );
             }
 
+            // IMAGE WIDGET
+if (msg.sender === "widget" && msg.type === "image") {
+  return (
+    <div key={index} className="outputMessage imageWidget">
+      <div className="mainImageDiv">
+        <div className="innerImageDiv">
+          <img src={msg.image.url} alt={msg.image.title} />
+        </div>
+
+        <div className="imageMeta">
+          <div className="imageTitle">{msg.image.title}</div>
+          <div className="imageSub">{msg.image.subtitle}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
              // EVENTS WIDGET
 if (msg.sender === "widget" && msg.type === "events") {
   return (
@@ -560,6 +611,10 @@ if (msg.sender === "widget" && msg.type === "events") {
           <button className="toolBtn" onClick={handleEventsClick}>
             Events
           </button>
+          <button className="toolBtn" onClick={handleImageClick}>
+            Image
+          </button>
+
             
         </div>
         <div className="chat">
