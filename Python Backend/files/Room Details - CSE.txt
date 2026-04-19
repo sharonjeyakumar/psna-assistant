@@ -1,0 +1,13 @@
+Room Number terminology:
+Room number is split into 2 sections. Every room number is 3 digits. The first digit is the floor, and the last 2 digits signifies the room number. In the department of CSE ROom numbers start fom the right side and increases along the left side of the building.
+
+Cognitive Computing Lab (CC Lab) is a computer lab located in the Ground floor of CSE Department, near the CSE's Ground floor's Gents Toilet.
+IBM Lab is a computer lab located in the first floor of Department of CSE. It in on the side of the IT Department's main stairs on the first floor.
+Cloud Lab is a computer lab located inside of the IBM Lab which is on the first floor of Department of CSE, on the side of the IT Stairs. You can find the Cloud lab on the left side of the IBM Computer lab, once you enter it.
+Software Development Lab is a computer lab located in the Second floor of CSE Department. It is located in the EEE side of the connected building, on the Second floor, near the Gent's Toilet on the far left of the building.
+Research Lab is a small computer lab, located outside of Software Development lab. It is located in the EEE side of the connected building. It is a room opposite to the SD Lab, and opposite to the EEE stairs on the side.
+Internet of Things (IoT) Lab is a small computer lab located on the first floor of the CSE Side of the connected building, room number 106.
+The Store room of CSE Department is located on the Ground floor of the CSE Department, Far right, near the Gent's Bathroom. They store Books, Clothes, and Equipments in there.
+The Exam cell of CSE Department is located on the Thrid floor of CSE Department, on the EEE side of the connected building, Room number 312.
+
+There are  staff rooms in the department of CSE located on each floor. 

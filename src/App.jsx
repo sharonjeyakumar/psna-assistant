@@ -3,11 +3,9 @@ import "./App.css";
 import Fuse from "fuse.js";
 const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-
 // Used for tracking and sending Whole chat Logs to AI
 var chatLogs = [];
 var userMsgForChatLogs = "";
-
 
 const events = [
   {
@@ -34,15 +32,14 @@ const galleryImages = [
   {
     title: "PSNA College Campus",
     url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200",
-    subtitle: "Main Academic Block"
+    subtitle: "Main Academic Block",
   },
   {
     title: "College Auditorium",
     url: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200",
-    subtitle: "Events & Seminars"
+    subtitle: "Events & Seminars",
   },
 ];
-
 
 function App() {
   // CUTTOFF LOGIC
@@ -93,62 +90,62 @@ function App() {
     let fullResponse = "";
     const lowerMsg = userMessage.toLowerCase();
 
-    // ---------- LOCAL LOGIC (Teachers + Fuse) ----------
-    const teacherKeywords = [
-      "cabin",
-      "contact",
-      "mail",
-      "email",
-      "dept",
-      "department",
-      "all",
-      "details",
-      "whole",
-    ];
+    // // ---------- LOCAL LOGIC (Teachers + Fuse) ----------
+    // const teacherKeywords = [
+    //   "cabin",
+    //   "contact",
+    //   "mail",
+    //   "email",
+    //   "dept",
+    //   "department",
+    //   "all",
+    //   "details",
+    //   "whole",
+    // ];
 
-    const isTeacherQuery = teacherKeywords.some((kw) => lowerMsg.includes(kw));
+    // const isTeacherQuery = teacherKeywords.some((kw) => lowerMsg.includes(kw));
 
-    let teacher = teachers.find((t) => lowerMsg.includes(t.name.toLowerCase()));
+    // let teacher = teachers.find((t) => lowerMsg.includes(t.name.toLowerCase()));
 
-    if (!teacher && isTeacherQuery && lastTeacher) {
-      teacher = lastTeacher;
-    }
+    // if (!teacher && isTeacherQuery && lastTeacher) {
+    //   teacher = lastTeacher;
+    // }
 
-    if (teacher) {
-      setLastTeacher(teacher);
-      const parts = [];
+    // if (teacher) {
+    //   setLastTeacher(teacher);
+    //   const parts = [];
 
-      if (lowerMsg.includes("cabin")) parts.push(`Cabin: ${teacher.cabin}`);
+    //   if (lowerMsg.includes("cabin")) parts.push(`Cabin: ${teacher.cabin}`);
 
-      if (lowerMsg.includes("contact"))
-        parts.push(`Contact: ${teacher.contact}`);
+    //   if (lowerMsg.includes("contact"))
+    //     parts.push(`Contact: ${teacher.contact}`);
 
-      if (lowerMsg.includes("mail") || lowerMsg.includes("email"))
-        parts.push(`Email: ${teacher.mail}`);
+    //   if (lowerMsg.includes("mail") || lowerMsg.includes("email"))
+    //     parts.push(`Email: ${teacher.mail}`);
 
-      if (lowerMsg.includes("dept") || lowerMsg.includes("department"))
-        parts.push(`Department: ${teacher.dept}`);
+    //   if (lowerMsg.includes("dept") || lowerMsg.includes("department"))
+    //     parts.push(`Department: ${teacher.dept}`);
 
-      if (parts.length > 0) {
-        fullResponse =
-          `${teacher.title} ${teacher.name}'s details:\n` + parts.join("\n");
-      } else if (
-        lowerMsg.includes("all") ||
-        lowerMsg.includes("details") ||
-        lowerMsg.includes("whole")
-      ) {
-        fullResponse =
-          `${teacher.title} ${teacher.name} (${teacher.dept})\n` +
-          `Cabin: ${teacher.cabin}\n` +
-          `Contact: ${teacher.contact}\n` +
-          `Email: ${teacher.mail}`;
-      } else {
-        fullResponse = `${teacher.title} ${teacher.name} is a Faculty member of PSNA College. What do you want to know? (cabin, contact, mail, dept, or all details)`;
-      }
-    } else {
-      const results = fuse.search(userMessage);
-      fullResponse = results.length > 0 ? results[0].item.answer : "";
-    }
+    //   if (parts.length > 0) {
+    //     fullResponse =
+    //       `${teacher.title} ${teacher.name}'s details:\n` + parts.join("\n");
+    //   } else if (
+    //     lowerMsg.includes("all") ||
+    //     lowerMsg.includes("details") ||
+    //     lowerMsg.includes("whole")
+    //   ) {
+    //     fullResponse =
+    //       `${teacher.title} ${teacher.name} (${teacher.dept})\n` +
+    //       `Cabin: ${teacher.cabin}\n` +
+    //       `Contact: ${teacher.contact}\n` +
+    //       `Email: ${teacher.mail}`;
+    //   } else {
+    //     fullResponse = `${teacher.title} ${teacher.name} is a Faculty member of PSNA College. What do you want to know? (cabin, contact, mail, dept, or all details)`;
+    //   }
+    // } else {
+    //   const results = fuse.search(userMessage);
+    //   fullResponse = results.length > 0 ? results[0].item.answer : "";
+    // }
 
     // ---------- AI API CALL ----------
     try {
@@ -180,9 +177,31 @@ function App() {
       setIsTyping(true);
 
       let index = 0;
-
+      let parsedImageObj = null;
       const interval = setInterval(() => {
         index++;
+        let hasAFileLink = fullResponse.indexOf("$%FILE_LINK:");
+        if (hasAFileLink !== -1) {
+          console.log("before parsing: ", fullResponse);
+          let fileLinkStr = fullResponse.split("$%FILE_LINK:")[1];
+          fileLinkStr = fileLinkStr.replaceAll(" ", "");
+          fileLinkStr = fileLinkStr.split('"}')[0] + '"}';
+          console.log("FILE LINK STR: ", fileLinkStr);
+          let fileLink = JSON.parse(fileLinkStr.trim());
+          console.log("File Link Obj", fileLink);
+          parsedImageObj = {
+            sender: "widget",
+            type: fileLink.type,
+            image: {
+              title: "",
+              url: fileLink.link,
+              subtitle: "",
+            },
+          };
+          console.log("After parsing: ", parsedImageObj);
+        }
+
+        fullResponse = fullResponse.split("$%FILE_LINK:")[0];
 
         setMessages((prev) => {
           const updated = [...prev];
@@ -195,6 +214,10 @@ function App() {
         });
 
         if (index >= fullResponse.length) {
+          console.log("Image Object: ", parsedImageObj);
+          if (parsedImageObj !== null) {
+            setMessages((prev) => [...prev, parsedImageObj]);
+          }
           clearInterval(interval);
           setIsTyping(false);
         }
@@ -342,61 +365,55 @@ function App() {
 
   // Events
   const handleEventsClick = () => {
-  setMode("events");
-  setMessages((prev) => [
-    ...prev,
-    { sender: "widget", type: "events" },
-  ]);
-};
-const handleEventClick = (event) => {
-  setMessages((prev) => [
-    ...prev,
-    {
-      sender: "ai",
-      text: `📅 ${event.name}
+    setMode("events");
+    setMessages((prev) => [...prev, { sender: "widget", type: "events" }]);
+  };
+  const handleEventClick = (event) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "ai",
+        text: `📅 ${event.name}
 Department: ${event.dept}
 Date: ${event.date}
 
 ${getDaysLeft(event.date)}`,
-    },
-  ]);
+      },
+    ]);
 
-  setMode("chat"); // optional: go back to chat mode
-};
+    setMode("chat"); // optional: go back to chat mode
+  };
 
+  const getDaysLeft = (dateString) => {
+    const today = new Date();
+    const eventDate = new Date(dateString);
 
-const getDaysLeft = (dateString) => {
-  const today = new Date();
-  const eventDate = new Date(dateString);
+    // Remove time for accurate day diff
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
 
-  // Remove time for accurate day diff
-  today.setHours(0, 0, 0, 0);
-  eventDate.setHours(0, 0, 0, 0);
+    const diffTime = eventDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  const diffTime = eventDate - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 0) return `${diffDays} days to go`;
+    if (diffDays === 0) return "Today 🎉";
+    return "Event passed";
+  };
 
-  if (diffDays > 0) return `${diffDays} days to go`;
-  if (diffDays === 0) return "Today 🎉";
-  return "Event passed";
-};
+  // IMAGE LOGIC
+  const handleImageClick = () => {
+    const randomImage =
+      galleryImages[Math.floor(Math.random() * galleryImages.length)];
 
-// IMAGE LOGIC
-const handleImageClick = () => {
-  const randomImage =
-    galleryImages[Math.floor(Math.random() * galleryImages.length)];
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      sender: "widget",
-      type: "image",
-      image: randomImage
-    }
-  ]);
-};
-
-
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "widget",
+        type: "image",
+        image: randomImage,
+      },
+    ]);
+  };
 
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
@@ -498,64 +515,63 @@ const handleImageClick = () => {
             }
 
             // IMAGE WIDGET
-if (msg.sender === "widget" && msg.type === "image") {
-  return (
-    <div key={index} className="outputMessage imageWidget">
-      <div className="mainImageDiv">
-        <div className="innerImageDiv">
-          <img src={msg.image.url} alt={msg.image.title} />
-        </div>
+            if (msg.sender === "widget" && msg.type === "image") {
+              return (
+                <div key={index} className="outputMessage imageWidget">
+                  <div className="mainImageDiv">
+                    <div className="innerImageDiv">
+                      <img src={msg.image.url} alt={msg.image.title} />
+                    </div>
 
-        <div className="imageMeta">
-          <div className="imageTitle">{msg.image.title}</div>
-          <div className="imageSub">{msg.image.subtitle}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
+                    <div className="imageMeta">
+                      <div className="imageTitle">{msg.image.title}</div>
+                      <div className="imageSub">{msg.image.subtitle}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
 
+            // EVENTS WIDGET
+            if (msg.sender === "widget" && msg.type === "events") {
+              return (
+                <div key={index} className="outputMessage eventsWidget">
+                  <h3>📅 Upcoming Events</h3>
 
+                  <div className="eventsContainer">
+                    {events.map((event, i) => {
+                      const isClickable =
+                        event.link && event.link.trim() !== "";
 
-             // EVENTS WIDGET
-if (msg.sender === "widget" && msg.type === "events") {
-  return (
-    <div key={index} className="outputMessage eventsWidget">
-      <h3>📅 Upcoming Events</h3>
+                      return (
+                        <div
+                          key={i}
+                          className={`eventCard ${!isClickable ? "disabled" : ""}`}
+                          onClick={() => {
+                            if (!isClickable) return;
+                            window.open(event.link, "_blank");
+                          }}
+                        >
+                          <div className="eventHeader">
+                            <h4>{event.name}</h4>
+                            <div className="eventDate">{event.date}</div>
+                          </div>
 
-      <div className="eventsContainer">
-       {events.map((event, i) => {
-  const isClickable = event.link && event.link.trim() !== "";
-
-  return (
-    <div
-      key={i}
-      className={`eventCard ${!isClickable ? "disabled" : ""}`}
-      onClick={() => {
-        if (!isClickable) return;
-        window.open(event.link, "_blank");
-      }}
-    >
-      <div className="eventHeader">
-        <h4>{event.name}</h4>
-        <div className="eventDate">{event.date}</div>
-      </div>
-
-      <div className="eventBottom">
-        <div className="eventDept">Department: {event.dept}</div>
-        <div className="eventCountdown">
-          {getDaysLeft(event.date)}
-        </div>
-      </div>
-    </div>
-  );
-})}
-
-      </div>
-    </div>
-  );
-}
-
+                          <div className="eventBottom">
+                            <div className="eventDept">
+                              Department: {event.dept}
+                            </div>
+                            <div className="eventCountdown">
+                              {getDaysLeft(event.date)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
 
             return (
               <div
@@ -614,7 +630,6 @@ if (msg.sender === "widget" && msg.type === "events") {
           <button className="toolBtn" onClick={handleImageClick}>
             Image
           </button>
-
             
         </div>
         <div className="chat">

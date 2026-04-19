@@ -41,18 +41,28 @@ app.add_middleware(
 class BasicRequest(BaseModel):
     prompt : str
 
+link_format = "$%FILE_LINK:{\"type\": \"image/file\", \"link\":\"https://link.to.image/\"}"
 
 
 @app.post('/api/respond')
 def send_response(req: BasicRequest):
-    prompt = req.prompt
+    chatLogs = req.prompt
+    chatLogsJSON = json.loads(chatLogs)
+    prompt = chatLogsJSON[-1]["USER"]
     print(prompt)
-
     retrieved_docs = vectorStore.similarity_search(prompt, k=3)
     context = "\n\n".join([doc.page_content for doc in retrieved_docs])
+    print(context)
 
     custom_prompt = f"""You are a Cheerful Assistant from PSNA College of Engineering and Technology trying to help people by answering their queries.
-    You are to act like a real friendly person, and answer the user query with what you know as context. DO NOT give long answers.
+    You are to act like a real friendly person, and answer the user query with what you know as context. **Keep your answers to a maximum of 3 sentences**. If there are any links involved, like a link of a file or image, give that link in the following JSON format with the prefix code attached, AT THE VERY END OF THE REPLY.\n\n
+    **Format for links**\n
+    If there seems to be any links in the context, form that link in a JSON String with following 2 attributes.\n 
+    1. "type" -> if it an image link, then type should be "image", else it should be "file"\n
+    2. "link" -> the link that you found. \n
+    Attach this json string AT THE VERY END OF YOUR REPLY with this prefix "$%FILE_LINK:"
+    **THERE SHOULD NOT BE ANY TEXT AFTER YOU GAVE THE IMAGE AND YOU CAN ONLY REPLY ONE IMAGE PER QUERY**\n
+    **If there is no image or file links involved for the answer, you can ignore the json string all together, just give the text reply**
 What you know about this query:
 {context}
 
