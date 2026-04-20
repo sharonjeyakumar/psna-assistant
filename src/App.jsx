@@ -66,6 +66,9 @@ function App() {
   const lastMessageCount = useRef(0);
   const bottomRef = useRef(null);
 
+  const typingIntervalRef = useRef(null);
+
+
   const scrollToBottom = () => {
     if (outputAreaRef.current) {
       const element = outputAreaRef.current;
@@ -76,10 +79,16 @@ function App() {
     }
   };
 
-  const stopAI = () => {
+const stopAI = () => {
   setIsThinking(false);
   setIsTyping(false);
+
+  if (typingIntervalRef.current) {
+    clearInterval(typingIntervalRef.current);
+    typingIntervalRef.current = null;
+  }
 };
+
 
   const reply = async (userMessage) => {
  
@@ -95,63 +104,6 @@ function App() {
 
     let fullResponse = "";
     const lowerMsg = userMessage.toLowerCase();
-
-    // // ---------- LOCAL LOGIC (Teachers + Fuse) ----------
-    // const teacherKeywords = [
-    //   "cabin",
-    //   "contact",
-    //   "mail",
-    //   "email",
-    //   "dept",
-    //   "department",
-    //   "all",
-    //   "details",
-    //   "whole",
-    // ];
-
-    // const isTeacherQuery = teacherKeywords.some((kw) => lowerMsg.includes(kw));
-
-    // let teacher = teachers.find((t) => lowerMsg.includes(t.name.toLowerCase()));
-
-    // if (!teacher && isTeacherQuery && lastTeacher) {
-    //   teacher = lastTeacher;
-    // }
-
-    // if (teacher) {
-    //   setLastTeacher(teacher);
-    //   const parts = [];
-
-    //   if (lowerMsg.includes("cabin")) parts.push(`Cabin: ${teacher.cabin}`);
-
-    //   if (lowerMsg.includes("contact"))
-    //     parts.push(`Contact: ${teacher.contact}`);
-
-    //   if (lowerMsg.includes("mail") || lowerMsg.includes("email"))
-    //     parts.push(`Email: ${teacher.mail}`);
-
-    //   if (lowerMsg.includes("dept") || lowerMsg.includes("department"))
-    //     parts.push(`Department: ${teacher.dept}`);
-
-    //   if (parts.length > 0) {
-    //     fullResponse =
-    //       `${teacher.title} ${teacher.name}'s details:\n` + parts.join("\n");
-    //   } else if (
-    //     lowerMsg.includes("all") ||
-    //     lowerMsg.includes("details") ||
-    //     lowerMsg.includes("whole")
-    //   ) {
-    //     fullResponse =
-    //       `${teacher.title} ${teacher.name} (${teacher.dept})\n` +
-    //       `Cabin: ${teacher.cabin}\n` +
-    //       `Contact: ${teacher.contact}\n` +
-    //       `Email: ${teacher.mail}`;
-    //   } else {
-    //     fullResponse = `${teacher.title} ${teacher.name} is a Faculty member of PSNA College. What do you want to know? (cabin, contact, mail, dept, or all details)`;
-    //   }
-    // } else {
-    //   const results = fuse.search(userMessage);
-    //   fullResponse = results.length > 0 ? results[0].item.answer : "";
-    // }
 
     // ---------- AI API CALL ----------
     try {
@@ -184,7 +136,7 @@ function App() {
 
       let index = 0;
       let parsedImageObj = null;
-      const interval = setInterval(() => {
+      typingIntervalRef.current = setInterval(() => {
         index++;
         let hasAFileLink = fullResponse.indexOf("$%FILE_LINK:");
         if (hasAFileLink !== -1) {
@@ -224,7 +176,9 @@ function App() {
           if (parsedImageObj !== null) {
             setMessages((prev) => [...prev, parsedImageObj]);
           }
-          clearInterval(interval);
+          clearInterval(typingIntervalRef.current);
+typingIntervalRef.current = null;
+
           setIsTyping(false);
         }
       }, 12);
@@ -409,20 +363,20 @@ ${getDaysLeft(event.date)}`,
   };
 
   // IMAGE LOGIC
-  const handleImageClick = () => {
-    stopAI();
-    const randomImage =
-      galleryImages[Math.floor(Math.random() * galleryImages.length)];
+  // const handleImageClick = () => {
+  //   stopAI();
+  //   const randomImage =
+  //     galleryImages[Math.floor(Math.random() * galleryImages.length)];
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: "widget",
-        type: "image",
-        image: randomImage,
-      },
-    ]);
-  };
+  //   setMessages((prev) => [
+  //     ...prev,
+  //     {
+  //       sender: "widget",
+  //       type: "image",
+  //       image: randomImage,
+  //     },
+  //   ]);
+  // };
 
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
@@ -629,16 +583,14 @@ ${getDaysLeft(event.date)}`,
             Faculty
           </button>
            
-          <button className="toolBtn" onClick={handleResetClick}>
+          {/* <button className="toolBtn" onClick={handleResetClick}>
             Result
-          </button>
+          </button> */}
             
           <button className="toolBtn" onClick={handleEventsClick}>
             Events
           </button>
-          <button className="toolBtn" onClick={handleImageClick}>
-            Image
-          </button>
+         
             
         </div>
         <div className="chat">
