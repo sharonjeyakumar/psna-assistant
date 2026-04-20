@@ -76,8 +76,14 @@ function App() {
     }
   };
 
+  const stopAI = () => {
+  setIsThinking(false);
+  setIsTyping(false);
+};
+
   const reply = async (userMessage) => {
-    if (mode !== "chat") return;
+ 
+
 
     // 1. Create EMPTY AI bubble immediately (so thinking can render)
     setMessages((prev) => [
@@ -226,9 +232,9 @@ function App() {
   };
 
   const handleSendClick = async () => {
-    if (mode !== "chat") return;
-    if (isThinking || isTyping || message.trim() === "") return;
+   if (isThinking || isTyping || message.trim() === "") return;
 
+    setMode("chat");  
     const userMessage = message;
     console.log({ message });
     setMessages((prev) => [...prev, { sender: "user", text: message }]);
@@ -338,6 +344,7 @@ function App() {
 
   // CUTTOFF CALCULATOR
   const handleCutoffClick = () => {
+    stopAI();
     setMode("cutoff");
     setMessages((prev) => [...prev, { sender: "widget", type: "cutoff" }]);
   };
@@ -365,6 +372,7 @@ function App() {
 
   // Events
   const handleEventsClick = () => {
+    stopAI();
     setMode("events");
     setMessages((prev) => [...prev, { sender: "widget", type: "events" }]);
   };
@@ -402,6 +410,7 @@ ${getDaysLeft(event.date)}`,
 
   // IMAGE LOGIC
   const handleImageClick = () => {
+    stopAI();
     const randomImage =
       galleryImages[Math.floor(Math.random() * galleryImages.length)];
 
