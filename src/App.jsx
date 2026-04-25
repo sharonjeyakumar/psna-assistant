@@ -8,15 +8,13 @@ import locationsJson from "./data/locations.json";
 
 const images = import.meta.glob("./data/images/*.{jpg,jpeg,png,webp}", {
   eager: true,
-  import: "default"
+  import: "default",
 });
 
 const locations = locationsJson.map((item) => ({
   ...item,
-  image: images[`./data/images/${item.image}`]
+  image: images[`./data/images/${item.image}`],
 }));
-
-
 
 // Used for tracking and sending Whole chat Logs to AI
 var chatLogs = [];
@@ -32,6 +30,11 @@ const galleryImages = [
     title: "College Auditorium",
     url: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200",
     subtitle: "Events & Seminars",
+  },
+  {
+    title: "Canteen",
+    url: "https://drive.google.com/thumbnail?id=1uHIVZcBJDU4umlVU0F_HiFN4eaCwW9ya&sz=w1000",
+    subtitle: "",
   },
 ];
 
@@ -61,8 +64,7 @@ function App() {
   const bottomRef = useRef(null);
 
   const typingIntervalRef = useRef(null);
-const [openLocation, setOpenLocation] = useState(null);
-
+  const [openLocation, setOpenLocation] = useState(null);
 
   const scrollToBottom = () => {
     if (outputAreaRef.current) {
@@ -74,21 +76,17 @@ const [openLocation, setOpenLocation] = useState(null);
     }
   };
 
-const stopAI = () => {
-  setIsThinking(false);
-  setIsTyping(false);
+  const stopAI = () => {
+    setIsThinking(false);
+    setIsTyping(false);
 
-  if (typingIntervalRef.current) {
-    clearInterval(typingIntervalRef.current);
-    typingIntervalRef.current = null;
-  }
-};
-
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+      typingIntervalRef.current = null;
+    }
+  };
 
   const reply = async (userMessage) => {
- 
-
-
     // 1. Create EMPTY AI bubble immediately (so thinking can render)
     setMessages((prev) => [
       ...prev,
@@ -172,7 +170,7 @@ const stopAI = () => {
             setMessages((prev) => [...prev, parsedImageObj]);
           }
           clearInterval(typingIntervalRef.current);
-typingIntervalRef.current = null;
+          typingIntervalRef.current = null;
 
           setIsTyping(false);
         }
@@ -181,9 +179,9 @@ typingIntervalRef.current = null;
   };
 
   const handleSendClick = async () => {
-   if (isThinking || isTyping || message.trim() === "") return;
+    if (isThinking || isTyping || message.trim() === "") return;
 
-    setMode("chat");  
+    setMode("chat");
     const userMessage = message;
     console.log({ message });
     setMessages((prev) => [...prev, { sender: "user", text: message }]);
@@ -374,11 +372,10 @@ ${getDaysLeft(event.date)}`,
   // };
 
   const handleLocationsClick = () => {
-  stopAI();
-  setMode("locations");
-  setMessages((prev) => [...prev, { sender: "widget", type: "locations" }]);
-};
-
+    stopAI();
+    setMode("locations");
+    setMessages((prev) => [...prev, { sender: "widget", type: "locations" }]);
+  };
 
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
@@ -540,47 +537,42 @@ ${getDaysLeft(event.date)}`,
 
             //locations widget
             if (msg.sender === "widget" && msg.type === "locations") {
-  return (
-    <div key={index} className="outputMessage locationsWidget">
-      <h3>📍 Campus Locations</h3>
+              return (
+                <div key={index} className="outputMessage locationsWidget">
+                  <h3>📍 Campus Locations</h3>
 
-      <div className="locationsContainer">
-        {locations.map((place, i) => (
-          <div key={i} className="locationCard">
+                  <div className="locationsContainer">
+                    {locations.map((place, i) => (
+                      <div key={i} className="locationCard">
+                        <div
+                          className="locationHeader"
+                          onClick={() =>
+                            setOpenLocation(openLocation === i ? null : i)
+                          }
+                        >
+                          {i + 1}. {place.name}
+                        </div>
 
-            <div
-              className="locationHeader"
-              onClick={() =>
-                setOpenLocation(openLocation === i ? null : i)
-              }
-            >
-              {i + 1}. {place.name}
-            </div>
+                        {openLocation === i && (
+                          <div className="locationExpand">
+                            <img src={place.image} alt={place.name} />
 
-         {openLocation === i && (
-  <div className="locationExpand">
-    <img src={place.image} alt={place.name} />
+                            <div className="locationInfo">
+                              <div className="locationDesc">
+                                {place.description} <span>Directions:</span>{" "}
+                                {place.direction}
+                              </div>
 
-    <div className="locationInfo">
-      <div className="locationDesc">
-       {place.description} <span>Directions:</span> {place.direction}
-      </div>
-
-      <div className="locationPath">
-        
-      </div>
-    </div>
-  </div>
-)}
-
-
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
+                              <div className="locationPath"></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
 
             return (
               <div
@@ -636,7 +628,6 @@ ${getDaysLeft(event.date)}`,
           <button className="toolBtn" onClick={handleEventsClick}>
             Events
           </button>
-         
             
         </div>
         <div className="chat">

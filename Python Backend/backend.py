@@ -12,6 +12,11 @@ import os
 import requests
 import json
 
+from google import genai
+from dotenv import load_dotenv
+
+load_dotenv()
+
 docs = []
 for i in os.listdir('files'):
     if i.endswith(".txt"):
@@ -43,6 +48,13 @@ class BasicRequest(BaseModel):
 
 link_format = "$%FILE_LINK:{\"type\": \"image/file\", \"link\":\"https://link.to.image/\"}"
 
+client = genai.Client()
+
+ai_resp = client.models.generate_content(
+    model="gemini-3-flash-preview", contents="Explain how AI works in a few words"
+)
+print(ai_resp.text)
+
 
 @app.post('/api/respond')
 def send_response(req: BasicRequest):
@@ -70,19 +82,23 @@ User Query:
 {prompt}
 """
 
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        headers={"Content-Type": "application/json"},
-        json={
-            "model": "mistral",
-            "prompt": custom_prompt,
-            "stream": False 
-        }
+    # response = requests.post(
+    #     "http://localhost:11434/api/generate",
+    #     headers={"Content-Type": "application/json"},
+    #     json={
+    #         "model": "mistral",
+    #         "prompt": custom_prompt,
+    #         "stream": False 
+    #     }
+    # )
+
+    response = client.models.generate_content(
+    model="gemini-3-flash-preview", contents=custom_prompt
     )
 
-    data = response.json()
+    data = response.text
 
     return {
-        "response": data.get("response", ""),
-        "done": data.get("done", True)
+        "response": data,
+        "done": True
     }

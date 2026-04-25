@@ -13,3 +13,6 @@ sentence-transformers==3.0.1
 huggingface-hub==0.23.4
 
 requests==2.32.3
+
+google-genai
+python-dotenv
