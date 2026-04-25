@@ -1,0 +1,24 @@
+[
+  {
+    "name": "SRL Auditorium",
+    "image": "auditorium.jpg",
+    "map": "https://maps.google.com/?q=PSNA+SRL+Auditorium",
+     "description": "Main auditorium used for symposiums, seminars and functions.",
+     "direction": "In front of main building."
+  },
+  {
+    "name": "IBM Lab",
+    "image": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200",
+    "map": "https://maps.google.com/?q=PSNA+IBM+Lab"
+  },
+  {
+    "name": "Cloud Computing Lab",
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200",
+    "map": "https://maps.google.com/?q=PSNA+Cloud+Computing+Lab"
+  },
+  {
+    "name": "Canteen",
+    "image": "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200",
+    "map": "https://maps.google.com/?q=PSNA+Canteen"
+  }
+]

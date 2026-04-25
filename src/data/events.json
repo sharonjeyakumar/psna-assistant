@@ -1,0 +1,20 @@
+[
+  {
+    "name": "CSEUTSAV'26",
+    "dept": "CSE",
+    "date": "2026-04-18",
+    "link": "https://example.com/hackathon"
+  },
+  {
+    "name": "Hackathon",
+    "dept": "ECE",
+    "date": "2026-05-10",
+    "link": "https://example.com/symposium"
+  },
+  {
+    "name": "AI Workshop",
+    "dept": "IT",
+    "date": "2026-05-20",
+    "link": null
+  }
+]

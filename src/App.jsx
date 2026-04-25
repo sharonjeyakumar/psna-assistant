@@ -2,31 +2,25 @@ import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import Fuse from "fuse.js";
 const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+import events from "./data/events.json";
+
+import locationsJson from "./data/locations.json";
+
+const images = import.meta.glob("./data/images/*.{jpg,jpeg,png,webp}", {
+  eager: true,
+  import: "default"
+});
+
+const locations = locationsJson.map((item) => ({
+  ...item,
+  image: images[`./data/images/${item.image}`]
+}));
+
+
 
 // Used for tracking and sending Whole chat Logs to AI
 var chatLogs = [];
 var userMsgForChatLogs = "";
-
-const events = [
-  {
-    name: "Hackathon 2026",
-    dept: "CSE",
-    date: "2026-04-10",
-    link: "https://example.com/hackathon",
-  },
-  {
-    name: "Tech Symposium",
-    dept: "ECE",
-    date: "2026-04-15",
-    link: "https://example.com/symposium",
-  },
-  {
-    name: "AI Workshop",
-    dept: "IT",
-    date: "2026-04-20",
-    link: null,
-  },
-];
 
 const galleryImages = [
   {
@@ -67,6 +61,7 @@ function App() {
   const bottomRef = useRef(null);
 
   const typingIntervalRef = useRef(null);
+const [openLocation, setOpenLocation] = useState(null);
 
 
   const scrollToBottom = () => {
@@ -378,6 +373,13 @@ ${getDaysLeft(event.date)}`,
   //   ]);
   // };
 
+  const handleLocationsClick = () => {
+  stopAI();
+  setMode("locations");
+  setMessages((prev) => [...prev, { sender: "widget", type: "locations" }]);
+};
+
+
   return (
     <div className={`page ${messages.length > 0 ? "hideAfter" : ""}`}>
       <div className="textArea">
@@ -536,6 +538,50 @@ ${getDaysLeft(event.date)}`,
               );
             }
 
+            //locations widget
+            if (msg.sender === "widget" && msg.type === "locations") {
+  return (
+    <div key={index} className="outputMessage locationsWidget">
+      <h3>📍 Campus Locations</h3>
+
+      <div className="locationsContainer">
+        {locations.map((place, i) => (
+          <div key={i} className="locationCard">
+
+            <div
+              className="locationHeader"
+              onClick={() =>
+                setOpenLocation(openLocation === i ? null : i)
+              }
+            >
+              {i + 1}. {place.name}
+            </div>
+
+         {openLocation === i && (
+  <div className="locationExpand">
+    <img src={place.image} alt={place.name} />
+
+    <div className="locationInfo">
+      <div className="locationDesc">
+       {place.description} <span>Directions:</span> {place.direction}
+      </div>
+
+      <div className="locationPath">
+        
+      </div>
+    </div>
+  </div>
+)}
+
+
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
             return (
               <div
                 key={index}
@@ -579,8 +625,8 @@ ${getDaysLeft(event.date)}`,
           <button className="toolBtn" onClick={handleCutoffClick}>
             Cutoff
           </button>
-          <button className="toolBtn" onClick={handleResetClick}>
-            Faculty
+          <button className="toolBtn" onClick={handleLocationsClick}>
+            Locations
           </button>
            
           {/* <button className="toolBtn" onClick={handleResetClick}>
