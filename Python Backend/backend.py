@@ -51,7 +51,7 @@ link_format = "$%FILE_LINK:{\"type\": \"image/file\", \"link\":\"https://link.to
 client = genai.Client()
 
 ai_resp = client.models.generate_content(
-    model="gemini-3-flash-preview", contents="Explain how AI works in a few words"
+    model="gemma-4-31b-it", contents="Explain how AI works in a few words"
 )
 print(ai_resp.text)
 
