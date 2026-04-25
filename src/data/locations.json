@@ -1,5 +1,12 @@
 [
   {
+    "name": "PSNA Entrance",
+    "image": "entrance.jpg",
+    "map": "https://maps.google.com/?q=PSNA+SRL+Auditorium",
+     "description": "Main auditorium used for symposiums, seminars and functions.",
+     "direction": "In front of main building."
+  },
+  {
     "name": "SRL Auditorium",
     "image": "auditorium.jpg",
     "map": "https://maps.google.com/?q=PSNA+SRL+Auditorium",
