@@ -100,7 +100,7 @@ function App() {
 
     // ---------- AI API CALL ----------
     try {
-      const apiResponse = await fetch("http://localhost:8000/api/respond", {
+      const apiResponse = await fetch(process.env.REACT_APP_BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: JSON.stringify(chatLogs) }),
