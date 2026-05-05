@@ -21,8 +21,8 @@ vectorStore = None
 
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-if os.path.exists("vectordbs") and len(os.listdir("vectordbs")) > 1:
-    vectorStore = FAISS.load_local(os.listdir[0], embedding_model)
+if os.path.exists("vectordbs") and len(os.listdir("vectordbs")) >= 1:
+    vectorStore = FAISS.load_local(os.path.join("vectordbs", os.listdir("vectordbs")[0]), embedding_model, allow_dangerous_deserialization=True)
 else:
     docs = []
     for i in os.listdir('files'):
