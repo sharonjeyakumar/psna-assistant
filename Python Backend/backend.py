@@ -17,20 +17,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-docs = []
-for i in os.listdir('files'):
-    if i.endswith(".txt"):
-        filepath = os.path.join('files', i)
-        loader = TextLoader(filepath, encoding="utf-8")
-        docs.extend(loader.load())
-
-splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-chunks = splitter.split_documents(docs)
+vectorStore = None
 
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-vectorStore = FAISS.from_documents(chunks,embedding_model)
-vectorStore.save_local('first_db')
+if os.path.exists("vectordbs") and len(os.listdir("vectordbs")) > 1:
+    vectorStore = FAISS.load_local(os.listdir[0], embedding_model)
+else:
+    docs = []
+    for i in os.listdir('files'):
+        if i.endswith(".txt"):
+            filepath = os.path.join('files', i)
+            loader = TextLoader(filepath, encoding="utf-8")
+            docs.extend(loader.load())
+
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = splitter.split_documents(docs)
+
+
+
+    vectorStore = FAISS.from_documents(chunks,embedding_model)
+    vectorStore.save_local('vectordbs/first_db')
 
 
 app = FastAPI()
@@ -50,10 +57,6 @@ link_format = "$%FILE_LINK:{\"type\": \"image/file\", \"link\":\"https://link.to
 
 client = genai.Client()
 
-ai_resp = client.models.generate_content(
-    model="gemma-4-31b-it", contents="Explain how AI works in a few words"
-)
-print(ai_resp.text)
 
 
 @app.post('/api/respond')
