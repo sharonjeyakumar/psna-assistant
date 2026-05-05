@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -9,7 +10,6 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 
 import os
-import requests
 import json
 
 from google import genai
@@ -17,30 +17,53 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Global references — populated after port is bound
 vectorStore = None
-
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-if os.path.exists("vectordbs") and len(os.listdir("vectordbs")) >= 1:
-    vectorStore = FAISS.load_local(os.path.join("vectordbs", os.listdir("vectordbs")[0]), embedding_model, allow_dangerous_deserialization=True)
-else:
-    docs = []
-    for i in os.listdir('files'):
-        if i.endswith(".txt"):
-            filepath = os.path.join('files', i)
-            loader = TextLoader(filepath, encoding="utf-8")
-            docs.extend(loader.load())
-
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.split_documents(docs)
+embedding_model = None
+client = None
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Everything inside here runs AFTER FastAPI binds to the port,
+    so Render detects the port immediately and doesn't time out.
+    """
+    global vectorStore, embedding_model, client
 
-    vectorStore = FAISS.from_documents(chunks,embedding_model)
-    vectorStore.save_local('vectordbs/first_db')
+    print("Loading embedding model...")
+    embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+    print("Loading vector store...")
+    if os.path.exists("vectordbs") and len(os.listdir("vectordbs")) >= 1:
+        vectorStore = FAISS.load_local(
+            os.path.join("vectordbs", os.listdir("vectordbs")[0]),
+            embedding_model,
+            allow_dangerous_deserialization=True
+        )
+    else:
+        docs = []
+        for i in os.listdir('files'):
+            if i.endswith(".txt"):
+                filepath = os.path.join('files', i)
+                loader = TextLoader(filepath, encoding="utf-8")
+                docs.extend(loader.load())
+
+        splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        chunks = splitter.split_documents(docs)
+
+        vectorStore = FAISS.from_documents(chunks, embedding_model)
+        vectorStore.save_local('vectordbs/first_db')
+
+    print("Initialising Gemini client...")
+    client = genai.Client()
+
+    print("All models loaded. Ready to serve requests.")
+    yield
+    # Cleanup (if needed) goes here
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,13 +73,17 @@ app.add_middleware(
     allow_methods=['*']
 )
 
+
 class BasicRequest(BaseModel):
-    prompt : str
+    prompt: str
+
 
 link_format = "$%FILE_LINK:{\"type\": \"image/file\", \"link\":\"https://link.to.image/\"}"
 
-client = genai.Client()
 
+@app.get("/")
+def health_check():
+    return {"status": "ok"}
 
 
 @app.post('/api/respond')
@@ -85,18 +112,8 @@ User Query:
 {prompt}
 """
 
-    # response = requests.post(
-    #     "http://localhost:11434/api/generate",
-    #     headers={"Content-Type": "application/json"},
-    #     json={
-    #         "model": "mistral",
-    #         "prompt": custom_prompt,
-    #         "stream": False 
-    #     }
-    # )
-
     response = client.models.generate_content(
-    model="gemini-3-flash-preview", contents=custom_prompt
+        model="gemini-3-flash-preview", contents=custom_prompt
     )
 
     data = response.text
